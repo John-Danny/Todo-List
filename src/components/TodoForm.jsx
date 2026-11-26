@@ -1,54 +1,72 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TodoList from "./TodoList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
 
 const TodoForm = () => {
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Hoàn thành giao diện Todo", completed: true },
-    { id: 2, title: "Hoàn thiện code React", completed: false },
-    { id: 3, title: "Deploy Vercel", completed: false },
-  ]);
+  const [tasks, setTasks] = useState([]);
   const countTaskNotCompleted = tasks.filter((task) => !task.completed).length;
   tasks.sort((a, b) => {
-    return b.completed - a.completed;
+    return a.completed - b.completed;
   });
 
+  useEffect(() => {
+    const getTasksFromLocalStorage = () => {
+      if (!localStorage.getItem("todo")) return;
+
+      const localTasks = JSON.parse(localStorage.getItem("todo"));
+      console.log(localTasks);
+      setTasks(localTasks);
+    };
+    getTasksFromLocalStorage();
+
+    return;
+  }, []);
+
+  const updateTasks = (newTasks) => {
+    localStorage.setItem("todo", JSON.stringify(newTasks));
+    setTasks(newTasks);
+  };
+
+  // Hàm addTask
   const handleAddTask = (e) => {
+    // 1. Validation input
     e.preventDefault();
     const input = e.target.querySelector("input");
-
     if (!input.value || input.value.trim().length === 0) {
       return;
     }
 
-    setTasks([
+    // 2. Thêm localstorage và setState
+    const newTasks = [
       ...tasks,
       {
         id: Math.round(Math.random() * 1000000),
         title: input.value,
         completed: false,
       },
-    ]);
+    ];
+    updateTasks(newTasks);
+
     input.value = "";
   };
 
+  //Hàm deleteTask
   const handleDeleteTask = (targetId) => {
-    setTasks(tasks.filter((task) => task.id !== targetId));
+    const newTasks = tasks.filter((task) => task.id !== targetId);
+    updateTasks(newTasks);
   };
 
+  //Hàm toggle Completed
   const handleToggleCompleted = (targetId) => {
-    console.log(`toggle ${targetId}`);
-
-    setTasks((prevTasks) => {
-      return prevTasks.map((task) => {
-        if (task.id === targetId) {
-          return { ...task, completed: !task.completed };
-        }
-
-        return task;
-      });
+    const newTasks = tasks.map((task) => {
+      if (task.id === targetId) {
+        return { ...task, completed: !task.completed };
+      }
+      return task;
     });
+
+    updateTasks(newTasks);
   };
 
   return (

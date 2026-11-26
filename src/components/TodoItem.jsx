@@ -11,20 +11,21 @@ const TodoItem = ({ task, handleDeleteTask, handleToggleCompleted }) => {
           onChange={() => {
             handleToggleCompleted(task.id);
           }}
-          className={`peer appearance-none w-6 h-6 rounded-xl  ${task.completed ? "bg-primary" : "bg-white cursor-pointer"}`}
-          disabled={task.completed}
+          className={`peer appearance-none w-6 h-6 rounded-xl z-10 cursor-pointer  ${task.completed ? "bg-primary" : "bg-white"}`}
         />
 
-        <FontAwesomeIcon
-          icon={faCheck}
-          className={`text-white absolute top-1 left-0.5 font-bold ${task.completed ? "" : "hidden!"}  `}
-        />
+        <label for={`task${task.id}`}>
+          <FontAwesomeIcon
+            icon={faCheck}
+            className={`text-white absolute top-1 left-0.5 font-bold cursor-pointer ${task.completed ? "" : "hidden!"}  `}
+          />
+        </label>
       </div>
 
       <div className="w-full h-12 bg-[#292929] rounded-[10px] flex items-center justify-between px-4">
         <label for={`task${task.id}`}>
           <h3
-            className={` ${task.completed ? "line-through text-[#aaa] cursor-not-allowed" : "text-white cursor-pointer"}`}
+            className={`cursor-pointer ${task.completed ? "line-through text-[#aaa]" : "text-white "}`}
           >
             {task.title}
           </h3>
